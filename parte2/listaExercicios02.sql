@@ -130,3 +130,17 @@ DELIMITER ;
 -- Teste a stored procedure
 CALL sp_AdicionarLivro('O Novo Livro', 1, 2022, 250, 1);
 CALL sp_AdicionarLivro('A Jornada', 1, 2000, 320, 1); 
+
+8) Autor mais antigo:
+
+DELIMITER //
+CREATE PROCEDURE sp_AutorMaisAntigo()
+BEGIN
+    SELECT CONCAT(Nome, ' ', Sobrenome) AS AutorMaisAntigo
+    FROM Autor
+    WHERE Data_Nascimento = (SELECT MIN(Data_Nascimento) FROM Autor);
+END //
+DELIMITER ;
+
+-- Teste a stored procedure
+CALL sp_AutorMaisAntigo();

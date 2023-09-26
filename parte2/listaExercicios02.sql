@@ -144,3 +144,16 @@ DELIMITER ;
 
 -- Teste a stored procedure
 CALL sp_AutorMaisAntigo();
+
+9) Documentação e Comentários
+
+DELIMITER //
+CREATE PROCEDURE sp_LivrosPorCategoria(IN categoriaNome VARCHAR(100))
+BEGIN
+    /* Esta stored procedure lista os títulos dos livros que pertencem a uma categoria específica.
+       Parâmetros:
+       - categoriaNome: o nome da categoria desejada.
+    */
+
+    SELECT
+DELIMITER ;

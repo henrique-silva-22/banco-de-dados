@@ -145,7 +145,7 @@ DELIMITER ;
 -- Teste a stored procedure
 CALL sp_AutorMaisAntigo();
 
-9) Documentação e Comentários
+9) Documentação e Comentários:
 
 DELIMITER //
 CREATE PROCEDURE sp_LivrosPorCategoria(IN categoriaNome VARCHAR(100))
@@ -157,3 +157,18 @@ BEGIN
 
     SELECT
 DELIMITER ;
+
+10)Livros e Seus Autores:
+
+DELIMITER //
+CREATE PROCEDURE sp_LivrosESeusAutores()
+BEGIN
+    SELECT Livro.Titulo, CONCAT(Autor.Nome, ' ', Autor.Sobrenome) AS Autor
+    FROM Livro
+    INNER JOIN Autor_Livro ON Livro.Livro_ID = Autor_Livro.Livro_ID
+    INNER JOIN Autor ON Autor_Livro.Autor_ID = Autor.Autor_ID;
+END //
+DELIMITER ;
+
+-- Teste a stored procedure
+CALL sp_LivrosESeusAutores();

@@ -105,3 +105,28 @@ DELIMITER ;
 
 -- Teste a stored procedure
 CALL sp_TitulosPorCategoria('Romance');
+
+7)Adição de Livro com Tratamento de Erros:
+
+DELIMITER //
+CREATE PROCEDURE sp_AdicionarLivro(IN titulo VARCHAR(255), IN editoraID INT, IN anoPublicacao INT, IN numPaginas INT, IN categoriaID INT)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Erro ao adicionar o livro. Verifique os parâmetros.' AS Resultado;
+    END;
+
+    START TRANSACTION;
+
+    INSERT INTO Livro (Titulo, Editora_ID, Ano_Publicacao, Numero_Paginas, Categoria_ID)
+    VALUES (titulo, editoraID, anoPublicacao, numPaginas, categoriaID);
+
+    COMMIT;
+    SELECT 'Livro adicionado com sucesso.' AS Resultado;
+END //
+DELIMITER ;
+
+-- Teste a stored procedure
+CALL sp_AdicionarLivro('O Novo Livro', 1, 2022, 250, 1);
+CALL sp_AdicionarLivro('A Jornada', 1, 2000, 320, 1); 

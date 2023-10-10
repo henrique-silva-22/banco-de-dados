@@ -1,0 +1,196 @@
+
+1. Funções de String:
+
+A) CREATE TABLE nomes (
+    nome VARCHAR(50)
+);
+
+INSERT INTO nomes (nome) VALUES
+    ('Roberta'),
+    ('Roberto'),
+    ('Maria Clara'),
+    ('João');
+    
+B) SELECT UPPER(nome) FROM nomes;
+
+C)SELECT nome, LENGTH(nome) AS tamanho FROM nomes;
+
+D) SELECT
+    CASE
+        WHEN nome LIKE '%Maria%' or '%Roberta%' THEN CONCAT('Sra. ', nome)
+        ELSE CONCAT('Sr. ', nome)
+    END AS nome_formatado
+FROM nomes;
+
+2. Funções Numéricas:
+
+A) CREATE TABLE produtos (
+    produto VARCHAR(50),
+    preco DECIMAL(10, 2),
+    quantidade INT
+);
+
+INSERT INTO produtos (produto, preco, quantidade) VALUES
+    ('Produto A', 15.99, 10),
+    ('Produto B', 29.99, 5),
+    ('Produto C', 10.50, 0);
+    
+B) SELECT produto, ROUND(preco, 2) AS preco_arredondado FROM produtos;
+
+C) SELECT produto, ABS(quantidade) AS quantidade_absoluta FROM produtos;
+
+D) SELECT AVG(preco) AS media_precos FROM produtos;
+
+3. Funções de Data:
+
+A) CREATE TABLE eventos (
+    data_evento DATE
+);
+
+INSERT INTO eventos (data_evento) VALUES
+    ('2023-10-08'),
+    ('2023-10-09'),
+    ('2023-10-15');
+    
+B)INSERT INTO eventos (data_evento) VALUES (NOW());
+
+C) SELECT
+    data_evento,
+    DATEDIFF(CURRENT_DATE(), data_evento) AS dias_passados
+FROM eventos;
+
+D) SELECT data_evento, DAYNAME(data_evento) AS dia_semana FROM eventos;
+
+
+4. Funções de Controle de Fluxo:
+
+A) SELECT produto,
+    IF(quantidade > 0, 'Em estoque', 'Fora de estoque') AS status_estoque
+FROM produtos;
+
+B) SELECT produto,
+    CASE
+        WHEN preco < 15.00 THEN 'Barato'
+        WHEN preco >= 15.00 AND preco <= 30.00 THEN 'Médio'
+        ELSE 'Caro'
+    END AS categoria_preco
+FROM produtos;
+
+
+
+
+5. Função Personalizada:
+
+A)
+DELIMITER //
+
+CREATE FUNCTION TOTAL_VALOR(preco DECIMAL(10, 2), quantidade INT)
+RETURNS DECIMAL(10, 2)
+DETERMINISTIC
+BEGIN
+    DECLARE total DECIMAL(10, 2);
+    SET total = preco * quantidade;
+    RETURN total;
+END //
+
+DELIMITER ;
+
+B) SELECT produto, quantidade, preco, TOTAL_VALOR(preco, quantidade) AS valor_total FROM produtos;
+
+
+6. Funções de Agregação:
+
+A) SELECT COUNT(*) AS total_produtos FROM produtos;
+
+B) SELECT produto,
+  preco FROM produtos WHERE preco = (SELECT MAX(preco)
+FROM produtos);
+
+C) SELECT produto, 
+  preco FROM produtos WHERE preco = (SELECT MIN(preco)
+FROM produtos);
+ 
+D) SELECT
+    SUM(IF(quantidade > 0, preco * quantidade, 0)) AS soma_total_estoque
+FROM produtos;
+
+
+
+
+
+7. Criando funções
+
+A)
+DELIMITER //
+
+CREATE FUNCTION FATORIAL(n INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE resultado INT DEFAULT 1;
+    DECLARE i INT;
+
+    IF n < 0 THEN
+        SET resultado = -1; -- Indica que o fatorial de um número negativo não é definido.
+    ELSE
+        SET i = 1;
+        WHILE i <= n DO
+            SET resultado = resultado * i;
+            SET i = i + 1;
+        END WHILE;
+    END IF;
+
+    RETURN resultado;
+END //
+
+DELIMITER ;
+
+
+B)
+DELIMITER //
+
+CREATE FUNCTION EXPONENCIAL(base DECIMAL(10, 2), expoente INT)
+RETURNS DECIMAL(10, 2)
+DETERMINISTIC
+BEGIN
+    DECLARE resultado DECIMAL(10, 2);
+    SET resultado = POW(base, expoente);
+    RETURN resultado;
+END //
+
+DELIMITER ;
+
+C)
+DELIMITER //
+
+CREATE FUNCTION E_PALINDROMO(palavra VARCHAR(255))
+RETURNS INT
+BEGIN
+    DECLARE tamanho INT;
+    DECLARE i INT;
+    DECLARE metade INT;
+    DECLARE reverso VARCHAR(255);
+    
+    SET tamanho = LENGTH(palavra);
+    SET metade = FLOOR(tamanho / 2);
+    SET i = 1;
+    
+    WHILE i <= metade DO
+        SET reverso = CONCAT(SUBSTRING(palavra, i, 1), reverso);
+        SET i = i + 1;
+    END WHILE;
+    
+    IF tamanho % 2 = 0 THEN
+        SET reverso = CONCAT(reverso, SUBSTRING(palavra, metade + 1, metade));
+    ELSE
+        SET reverso = CONCAT(reverso, SUBSTRING(palavra, metade + 2, metade));
+    END IF;
+    
+    IF palavra = reverso THEN
+        RETURN 1;
+    ELSE
+        RETURN 0; 
+    END IF;
+END //
+
+DELIMITER ;
